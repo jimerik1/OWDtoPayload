@@ -1,6 +1,6 @@
 from flask import request, jsonify
-from __init__ import upload_bp
-from ..parsers import DatasetParser
+from routes import upload_bp
+from parsers import DatasetParser
 
 @upload_bp.route('/upload', methods=['POST'])
 def upload_json():
