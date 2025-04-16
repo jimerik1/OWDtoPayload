@@ -4,6 +4,7 @@ from .components.porepressure_parser import PorePressureParser
 from .components.fracpressure_parser import FracPressureParser
 from .components.collapsepressure_parser import CollapsePressureParser
 from .components.minstress_parser import MinstressPressureParser
+from .components.schematic_parser import SchematicParser  
 
 
 class DatasetParser(BaseParser):
@@ -44,6 +45,11 @@ class DatasetParser(BaseParser):
             formation_data = data.get('formation', {}).get('min_horizontal_stress', [])
             minstresspressure_parser = MinstressPressureParser(formation_data)
             ordered_result["minumum_horisontal_stress_pressure"] = minstresspressure_parser.parse()
+
+            # Add well schematic information
+            casing_scheme_data = data.get('casing', {}).get('scheme', [])
+            schematic_parser = SchematicParser(casing_scheme_data)
+            ordered_result["well_schematic"] = schematic_parser.parse()
 
             return ordered_result, None
             

@@ -2,7 +2,7 @@ from ..base_parser import BaseParser
 
 class CollapsePressureParser(BaseParser):
     def parse(self):
-        """Parse frac pressure data"""
+        """Parse collapse pressure data"""
         result = []
         units = {}
         
