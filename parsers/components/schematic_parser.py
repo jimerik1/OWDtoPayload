@@ -19,7 +19,9 @@ class SchematicParser(BaseParser):
                 "string_function": casing.get("name"),
                 "string_type": casing.get("type"),
                 "float_depth": casing.get("float"),
-                "mud_density": casing.get("mudro")
+                "mud_density": casing.get("mudatshoe"),
+                "section_depth": casing.get("holedepth"),
+                "hole_size": casing.get("holesize"),
             }
             
             # Extract string section information

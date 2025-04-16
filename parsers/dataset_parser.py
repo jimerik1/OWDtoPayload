@@ -5,7 +5,7 @@ from .components.fracpressure_parser import FracPressureParser
 from .components.collapsepressure_parser import CollapsePressureParser
 from .components.minstress_parser import MinstressPressureParser
 from .components.schematic_parser import SchematicParser  
-
+from .components.trajectory_parser import TrajectoryParser
 
 class DatasetParser(BaseParser):
     def parse(self):
@@ -50,6 +50,11 @@ class DatasetParser(BaseParser):
             casing_scheme_data = data.get('casing', {}).get('scheme', [])
             schematic_parser = SchematicParser(casing_scheme_data)
             ordered_result["well_schematic"] = schematic_parser.parse()
+
+            # Add trajectory information
+            trajectory_data = data.get('sites', [])[0].get('wells', [])[0].get('model', [])
+            trajectory_parser = TrajectoryParser(trajectory_data)
+            ordered_result["well_trajectory"] = trajectory_parser.parse()
 
             return ordered_result, None
             
