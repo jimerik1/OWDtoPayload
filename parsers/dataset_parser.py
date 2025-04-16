@@ -1,7 +1,10 @@
 from .base_parser import BaseParser
-from .components.blowoutkill_parser import BlowoutKillParser
 from .components.basicdata_parser import BasicDataParser
-from .components.formationdata_parser import FormationDataParser
+from .components.porepressure_parser import PorePressureParser
+from .components.fracpressure_parser import FracPressureParser
+from .components.collapsepressure_parser import CollapsePressureParser
+from .components.minstress_parser import MinstressPressureParser
+
 
 class DatasetParser(BaseParser):
     def parse(self):
@@ -21,17 +24,27 @@ class DatasetParser(BaseParser):
             # 1. Add basic_info 
             basic_data_parser = BasicDataParser(dataset)
             ordered_result["basic_info"] = basic_data_parser.parse()
+                        
+            # Add pore pressure
+            formation_data = data.get('formation', {}).get('pore_pressure', [])
+            porepressure_parser = PorePressureParser(formation_data)
+            ordered_result["pore_pressure"] = porepressure_parser.parse()
             
-            # 2. Add blowoutkill 
-            blowoutkill_data = data.get('blowoutkill', [])
-            blowoutkill_parser = BlowoutKillParser(blowoutkill_data)
-            ordered_result["blowoutkill"] = blowoutkill_parser.parse()
-            
-            # Add formationdata
-            formation_data = data.get('formationdata', [])
-            formationdata_parser = FormationDataParser(formation_data)
-            ordered_result["formationdata"] = formationdata_parser.parse()
-            
+            # Add frac pressure
+            formation_data = data.get('formation', {}).get('fracture_pressure', [])
+            fracpressure_parser = FracPressureParser(formation_data)
+            ordered_result["frac_pressure"] = fracpressure_parser.parse()
+
+            # Add collapse pressure
+            formation_data = data.get('formation', {}).get('collapse_pressure', [])
+            collapsepressure_parser = CollapsePressureParser(formation_data)
+            ordered_result["collapse_pressure"] = collapsepressure_parser.parse()
+
+            # Add minimum horisontal pressure
+            formation_data = data.get('formation', {}).get('min_horizontal_stress', [])
+            minstresspressure_parser = MinstressPressureParser(formation_data)
+            ordered_result["minumum_horisontal_stress_pressure"] = minstresspressure_parser.parse()
+
             return ordered_result, None
             
         except Exception as e:
