@@ -18,7 +18,13 @@ def upload_json():
         if error:
             return jsonify({"error": "Failed to parse dataset", "details": error}), 400
             
-        return jsonify({"success": True, "data": result}), 200
+        # Create response in desired order
+        response = {
+            "success": True,
+            "data": result
+        }
+            
+        return jsonify(response), 200
         
     except Exception as e:
         return jsonify({"error": "An error occurred", "details": str(e)}), 500

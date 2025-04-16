@@ -1,6 +1,7 @@
 from .base_parser import BaseParser
 from .components.blowoutkill_parser import BlowoutKillParser
-from .components.annularflex_parser import AnnularFlexParser
+from .components.basicdata_parser import BasicDataParser
+from .components.formationdata_parser import FormationDataParser
 
 class DatasetParser(BaseParser):
     def parse(self):
@@ -8,36 +9,30 @@ class DatasetParser(BaseParser):
         try:
             dataset = self.data.get('datasetdb', {})
             
-            # Extract basic information
-            result = {
-                "dataset_id": dataset.get('datasetid'),
-                "user_id": dataset.get('userid'),
-                "group_id": dataset.get('groupid'),
-                "name": dataset.get('name'),
-                "category": dataset.get('category'),
-                "type": dataset.get('type'),
-                "sort_fields": {
-                    "sort1": dataset.get('sort1'),
-                    "sort2": dataset.get('sort2'),
-                    "sort3": dataset.get('sort3'),
-                    "sort4": dataset.get('sort4')
-                }
-            }
+            # Create an empty result dict
+            result = {}
             
             # Extract data section
             data = dataset.get('data', {})
             
-            # Parse blowoutkill data if present
+            # Create a new dictionary in the specific order we want
+            ordered_result = {}
+            
+            # 1. Add basic_info 
+            basic_data_parser = BasicDataParser(dataset)
+            ordered_result["basic_info"] = basic_data_parser.parse()
+            
+            # 2. Add blowoutkill 
             blowoutkill_data = data.get('blowoutkill', [])
             blowoutkill_parser = BlowoutKillParser(blowoutkill_data)
-            result["blowoutkill"] = blowoutkill_parser.parse()
+            ordered_result["blowoutkill"] = blowoutkill_parser.parse()
             
-            # Parse annularflex data if present
-            annularflex_data = data.get('annularflex', [])
-            annularflex_parser = AnnularFlexParser(annularflex_data)
-            result["annularflex"] = annularflex_parser.parse()
+            # Add formationdata
+            formation_data = data.get('formationdata', [])
+            formationdata_parser = FormationDataParser(formation_data)
+            ordered_result["formationdata"] = formationdata_parser.parse()
             
-            return result, None
+            return ordered_result, None
             
         except Exception as e:
             return None, str(e)
